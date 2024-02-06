@@ -10,7 +10,7 @@ export function createGetter(path) {
     let value = obj;
 
     for (const part of parts) {
-      if (value[part] === undefined) {
+      if (!Object.hasOwn(value, part)) {
         return;
       }
 
