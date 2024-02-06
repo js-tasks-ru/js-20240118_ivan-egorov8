@@ -13,7 +13,7 @@ export function createGetter(path) {
       value = value[part];
 
       if (value === undefined) {
-        break;
+        return;
       }
     }
 
