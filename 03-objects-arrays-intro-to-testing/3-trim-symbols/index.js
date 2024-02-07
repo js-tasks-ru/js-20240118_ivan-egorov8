@@ -5,8 +5,12 @@
  * @returns {string} - the new string without extra symbols according passed size
  */
 export function trimSymbols(string, size) {
+  if (size === undefined) {
+    return string;
+  }
   // массив массивов с повторяющимися символами
-  // Например, для "xxxaxxx" будет [["x", "x", "x"], ["a"], ["x", "x", "x"]]
+  // и с применением ограничения по допустимому размеру
+  // Например, для "xxxaxxx" будет [["x", "x"], ["a"], ["x", "x"]]
   const repeatedChars = [];
 
   string.split('').forEach((char, idx, chars) => {
@@ -14,16 +18,11 @@ export function trimSymbols(string, size) {
     if (char !== previousChar) {
       repeatedChars.push([]);
     }
-    repeatedChars.at(-1).push(char);
-  });
-
-  // массив со строками, обрезанными по допустимому размеру
-  const trimedStrings = repeatedChars.map((chars) => {
-    if (chars.length > size) {
-      chars.length = size;
+    const lastRepeatedCharsItem = repeatedChars.at(-1);
+    if (lastRepeatedCharsItem.length < size) {
+      lastRepeatedCharsItem.push(char);
     }
-    return chars.join('');
   });
 
-  return trimedStrings.join('');
+  return repeatedChars.flat().join("");
 }
