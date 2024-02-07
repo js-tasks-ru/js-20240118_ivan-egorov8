@@ -18,12 +18,12 @@ export function trimSymbols(string, size) {
   });
 
   // массив со строками, обрезанными по допустимому размеру
-  const trimedChars = repeatedChars.map((chars) => {
+  const trimedStrings = repeatedChars.map((chars) => {
     if (chars.length > size) {
       chars.length = size;
     }
     return chars.join('');
   });
 
-  return trimedChars.join('');
+  return trimedStrings.join('');
 }
