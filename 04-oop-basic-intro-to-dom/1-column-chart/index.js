@@ -59,19 +59,19 @@ export default class ColumnChart {
 
   createTemplate() {
     return /*html*/ `
-    <div class="${this.createChartClasses()}" style="--chart-height: 50">
-      <div class="column-chart__title">
-        ${this.label}
-        ${this.createLinkTemplate()}
-      </div>
-      <div class="column-chart__container">
-        <div data-element="header" class="column-chart__header">
-          ${this.formatHeading(this.value)}</div>
-        <div data-element="body" class="column-chart__chart">
-          ${this.createChartBodyTemplate()}
+      <div class="${this.createChartClasses()}" style="--chart-height: 50">
+        <div class="column-chart__title">
+          ${this.label}
+          ${this.createLinkTemplate()}
+        </div>
+        <div class="column-chart__container">
+          <div data-element="header" class="column-chart__header">
+            ${this.formatHeading(this.value)}</div>
+          <div data-element="body" class="column-chart__chart">
+            ${this.createChartBodyTemplate()}
+          </div>
         </div>
       </div>
-    </div>
     `;
   }
 
