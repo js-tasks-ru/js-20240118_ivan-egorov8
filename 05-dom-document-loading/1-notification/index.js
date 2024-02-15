@@ -1,27 +1,65 @@
-// type: "success" | "error"
-// В один момент времени на странице может быть показано только одно сообщение
 export default class NotificationMessage {
-  constructor(content, { duration, type }) {
+  static lastMessage;
+
+  element;
+
+  content;
+  duration = 1000;
+  type = 'success'; // success | error
+
+  timeoutId;
+
+  constructor(content, { duration, type } = {}) {
     this.content = content;
     this.duration = duration;
     this.type = type;
+
+    const template = this.createTemplate();
+    this.element = this.createElement(template);
   }
 
-  show() {
-    // @TODO
+  // В один момент времени на странице может быть показано только одно сообщение
+  show(container = document.body) {
+    if (NotificationMessage.lastMessage) {
+      NotificationMessage.lastMessage.destroy();
+    }
+
+    NotificationMessage.lastMessage = this;
+    container.appendChild(this.element);
+
+    this.timeoutId = setTimeout(() => {
+      this.remove();
+    }, this.duration);
+  }
+
+  createElement(template) {
+    const element = document.createElement('div');
+    element.innerHTML = template;
+    return element.firstElementChild;
   }
 
   createTemplate() {
-    return /*html*/`
-      <div class="notification success" style="--value:20s">
+    return /*html*/ `
+      <div class="notification ${this.type}" style="--value:${this.duration}s">
         <div class="timer"></div>
         <div class="inner-wrapper">
-          <div class="notification-header">success</div>
+          <div class="notification-header">${this.type}</div>
           <div class="notification-body">
-            Hello world
+            ${this.content}
           </div>
         </div>
       </div>
     `;
+  }
+
+  remove() {
+    this.element.remove();
+  }
+
+  destroy() {
+    if (this.timeoutId) {
+      clearTimeout(this.timeoutId);
+    }
+    this.remove();
   }
 }
