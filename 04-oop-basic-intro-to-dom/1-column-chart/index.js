@@ -38,7 +38,7 @@ export default class ColumnChart {
     if (!this.link) {
       return '';
     }
-    return `
+    return /*html*/ `
       <a href="${this.link}" class="column-chart__link">View all</a>
     `;
   }
@@ -46,7 +46,7 @@ export default class ColumnChart {
   createChartBodyTemplate() {
     return this.getColumnProps()
       .map(({ value, percent }) => {
-        return `<div style="--value: ${value}" data-tooltip="${percent}"></div>`;
+        return /*html*/ `<div style="--value: ${value}" data-tooltip="${percent}"></div>`;
       })
       .join('');
   }
@@ -58,26 +58,27 @@ export default class ColumnChart {
   }
 
   createTemplate() {
-    return `
-    <div class="${this.createChartClasses()}" style="--chart-height: 50">
-      <div class="column-chart__title">
-        ${this.label}
-        ${this.createLinkTemplate()}
-      </div>
-      <div class="column-chart__container">
-        <div data-element="header" class="column-chart__header">
-          ${this.formatHeading(this.value)}</div>
-        <div data-element="body" class="column-chart__chart">
-          ${this.createChartBodyTemplate()}
+    return /*html*/ `
+      <div class="${this.createChartClasses()}" style="--chart-height: 50">
+        <div class="column-chart__title">
+          ${this.label}
+          ${this.createLinkTemplate()}
+        </div>
+        <div class="column-chart__container">
+          <div data-element="header" class="column-chart__header">
+            ${this.formatHeading(this.value)}</div>
+          <div data-element="body" class="column-chart__chart">
+            ${this.createChartBodyTemplate()}
+          </div>
         </div>
       </div>
-    </div>
     `;
   }
 
   update(newData) {
     this.data = newData;
-    this.element.querySelector('[data-element="body"]').innerHTML = this.createChartBodyTemplate();
+    this.element.querySelector('[data-element="body"]').innerHTML =
+      this.createChartBodyTemplate();
   }
 
   remove() {
