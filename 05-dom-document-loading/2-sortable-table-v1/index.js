@@ -1,6 +1,7 @@
 export default class SortableTable {
   element;
   subElements = [];
+
   #headerConfig = [];
   #data = [];
 
@@ -12,13 +13,27 @@ export default class SortableTable {
     this.#selectSubElements();
   }
 
+  sort(fieldId, order) {
+    const { sortType, sortable } = this.#headerConfig.find(
+      (item) => item.id === fieldId
+    );
+    if (!sortable) {
+      return;
+    }
+    this.#hideAllSortingArrows();
+    this.#setSortingArrow(fieldId, order);
+
+    const sortedData = this.#sortData(fieldId, order, sortType);
+    this.#updateBody(sortedData);
+  }
+
+  destroy() {
+    this.#remove();
+  }
+
   #render() {
     const template = this.#createTemplate();
     this.element = this.#createElement(template);
-  }
-
-  sort() {
-    // TODO: реализовать
   }
 
   #createElement(template) {
@@ -35,7 +50,7 @@ export default class SortableTable {
         </div>
 
         <div data-element="body" class="sortable-table__body">
-          ${this.#createBodyTemplate()}
+          ${this.#createBodyTemplate(this.#data)}
         </div>
       </div>
     `;
@@ -43,8 +58,12 @@ export default class SortableTable {
 
   #createHeaderCellTemplate({ id, title, sortable = false }) {
     return /*html*/ `
-      <div class="sortable-table__cell" data-id="${id}" data-sortable="${sortable}">
+      <div class="sortable-table__cell" data-id="${id}"
+        ${sortable ? 'data-sortable' : ''}>
         <span>${title}</span>
+        <span data-element="arrow" class="sortable-table__sort-arrow">
+          <span class="sort-arrow"></span>
+        </span>
       </div>
     `;
   }
@@ -55,6 +74,27 @@ export default class SortableTable {
       .join('');
   }
 
+  #setSortingArrow(fieldId, order) {
+    const sortingHeaderCell = this.subElements.header.querySelector(
+      `.sortable-table__cell[data-id="${fieldId}"]`
+    );
+
+    sortingHeaderCell.dataset.order = order;
+  }
+
+  /**
+   * Скрыть стрелки сортировок для всех колонок
+   */
+  #hideAllSortingArrows() {
+    const allHeaderCells = this.subElements.header.querySelectorAll(
+      '.sortable-table__cell[data-id]'
+    );
+
+    allHeaderCells.forEach((column) => {
+      column.dataset.order = '';
+    });
+  }
+
   #createDataRowTemplate(item) {
     return /*html*/ `
       <a href="/products/${item.id}" class="sortable-table__row">
@@ -63,23 +103,21 @@ export default class SortableTable {
     `;
   }
 
-  #createDataCellsTemplate(dataRow) {
-    return this.#headerConfig.map(({id, template}) => {
-      if (template) {
-        return template(dataRow[id]);
-      }
-      return /*html*/ `
-        <div class="sortable-table__cell">${dataRow[id]}</div>
+  #createDataCellsTemplate(rowData) {
+    return this.#headerConfig
+      .map(({ id, template }) => {
+        if (template) {
+          return template(rowData[id]);
+        }
+        return /*html*/ `
+        <div class="sortable-table__cell">${rowData[id]}</div>
       `;
-    }).join('');
+      })
+      .join('');
   }
 
-  #createBodyTemplate() {
-    return this.#data.map((item) => this.#createDataRowTemplate(item)).join('');
-  }
-
-  #remove() {
-    this.element.remove();
+  #createBodyTemplate(data) {
+    return data.map((item) => this.#createDataRowTemplate(item)).join('');
   }
 
   #selectSubElements() {
@@ -88,7 +126,27 @@ export default class SortableTable {
     });
   }
 
-  destroy() {
-    this.#remove();
+  #sortData(fieldId, order, sortType) {
+    const copiedData = [...this.#data];
+
+    const sortingFunction = this.#getSortingFunction(fieldId, order, sortType);
+    return copiedData.sort(sortingFunction);
+  }
+
+  #getSortingFunction(fieldId, order, sortType) {
+    const direction = order === 'asc' ? 1 : -1;
+    if (sortType === 'string') {
+      return (a, b) =>
+        direction * a[fieldId].localeCompare(b[fieldId], ['ru', 'en']);
+    }
+    return (a, b) => direction * (a[fieldId] - b[fieldId]);
+  }
+
+  #updateBody(data) {
+    this.subElements.body.innerHTML = this.#createBodyTemplate(data);
+  }
+
+  #remove() {
+    this.element.remove();
   }
 }
