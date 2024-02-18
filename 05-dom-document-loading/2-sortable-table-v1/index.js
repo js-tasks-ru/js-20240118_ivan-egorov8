@@ -43,7 +43,7 @@ export default class SortableTable {
   }
 
   #createTemplate() {
-    return /*html*/ `
+    return `
       <div class="sortable-table">
         <div data-element="header" class="sortable-table__header sortable-table__row">
           ${this.#createHeaderTemplate()}
@@ -57,7 +57,7 @@ export default class SortableTable {
   }
 
   #createHeaderCellTemplate({ id, title, sortable = false }) {
-    return /*html*/ `
+    return `
       <div class="sortable-table__cell" data-id="${id}"
         ${sortable ? 'data-sortable' : ''}>
         <span>${title}</span>
@@ -96,7 +96,7 @@ export default class SortableTable {
   }
 
   #createDataRowTemplate(item) {
-    return /*html*/ `
+    return `
       <a href="/products/${item.id}" class="sortable-table__row">
         ${this.#createDataCellsTemplate(item)}
       </a>
@@ -109,7 +109,7 @@ export default class SortableTable {
         if (template) {
           return template(rowData[id]);
         }
-        return /*html*/ `
+        return `
         <div class="sortable-table__cell">${rowData[id]}</div>
       `;
       })
