@@ -1,5 +1,6 @@
 class Tooltip {
   static #instance;
+  static #indent = 9;
   element;
 
   #handleDocumentPointerOver = (event) => {
@@ -11,7 +12,9 @@ class Tooltip {
   };
 
   #handleDocumentPointerOut = () => {
-    this.#remove();
+    if (this.element?.isConnected) {
+      this.#remove();
+    }
   };
 
   #handleDocumentPointerMove = ({ clientX, clientY }) => {
@@ -19,12 +22,11 @@ class Tooltip {
       return;
     }
 
-    const indent = 9;
-    let left = clientX + indent;
-    const top = clientY + indent;
+    let left = clientX + Tooltip.#indent;
+    const top = clientY + Tooltip.#indent;
     const { width: elementWidth } = this.element.getBoundingClientRect();
     const { clientWidth } = document.documentElement;
-    const isAtEdge = clientX > (clientWidth - elementWidth);
+    const isAtEdge = clientX > clientWidth - elementWidth;
 
     // чтобы tooltip не уходил за границы экрана справа
     if (isAtEdge) {
