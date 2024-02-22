@@ -194,16 +194,17 @@ export default class DoubleSlider {
     }
     const { direction } = this.#dragging;
     const { left, right } = directionEnum;
-    // left
+
     if (direction === left) {
-      const thumbRightPosition =
+      // позиция правого бегунка
+      const positionThumbRight =
         1 - parseFloat(this.subElements.thumbRight.style.right) / 100;
-      return Math.min(position, thumbRightPosition);
+      return Math.min(position, positionThumbRight);
     }
-    // right
-    const thumbLeftPosition =
+    // позиция левого бегунка
+    const positionThumbLeft =
       parseFloat(this.subElements.thumbLeft.style.left) / 100;
-    return Math.max(position, thumbLeftPosition);
+    return Math.max(position, positionThumbLeft);
   }
 
   #remove() {
